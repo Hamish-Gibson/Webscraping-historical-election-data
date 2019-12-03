@@ -2,40 +2,54 @@ import requests as rq
 import pandas as pd 
 import bs4 as bs 
 from scotland_constituencies import constituencies
-from tabulate import tabulate 
-
+from tabulate import tabulate
+import matplotlib.pyplot as plt
+import datetime as dt
 
 seat = pd.DataFrame()
 
-year = [
-        '2015 United Kingdom general election',
-        '2017 United Kingdom general election']
+year = {
+        '2010 United Kingdom general election': dt.datetime(2010,6,8),
+        '2015 United Kingdom general election': dt.datetime(2015,6,8),
+        '2017 United Kingdom general election':dt.datetime(2017,6,8)
+            }
 for election in year: 
     for constituency in constituencies:
         webdata = rq.get(constituencies[constituency])
         webdata = bs.BeautifulSoup(webdata.text, features = 'lxml')
         
-        #constituency = webdata.find('table', {'class' : 'infobox vcard'})
-        #constituency = constituency.find('th').text
-        
         tables = webdata.find_all('table', {'class' : 'wikitable'})
         
         for table in tables:
             for element in table.findChildren('caption'):
-                if element.findChildren('a', 
-                    {'title':election}):
+                if element.findChildren('a', {'title':election}):
                     print('Getting and processing data...')
                     for row in table.find_all('tr', {'class' : 'vcard'}):
                         candidate = [constituency]
                         for column in row.find_all('td')[1:-1]:
-                            candidate.append(column.text.strip('\n'))
+                            candidate.append(column.text.strip('\n').rstrip())
+                        candidate[4] = float(candidate[4])
                         df = {'Constituency': '','Party': '', 'Candidate': '', 
                               'Votes': '', '%':''}
                         for count, key in enumerate(df):
                             df[key] = candidate[count]
-                        seat = seat.append(pd.DataFrame(df, index=[election]))
+                        seat = seat.append(pd.DataFrame(df, index=[year[election]]))
         print('Data retrieved for: ', election, 'in',  constituency)
     
 
-print(tabulate(seat,headers='keys',tablefmt='psql'))
+#print(tabulate(seat,headers='keys',tablefmt='psql'))
+for constituency in constituencies:
+    graph = seat.loc[seat['Constituency'] == constituency]
+    
+    graph =  graph.groupby('Party')['%']
+    graph.plot(marker='^')
+    plt.title(constituency)
+    plt.xlabel('Election Year')
+    plt.xticks(rotation=90)
+    plt.ylabel('Votes (%)') 
+    plt.legend(bbox_to_anchor=(1.1, 1.05))
+    plt.grid(axis='both')
+    plt.show()
 
+
+    
