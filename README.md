@@ -1,5 +1,5 @@
 # Webscraping-historical-election-data
-Gathering historical election data for every constituency in Scotland
+It is projected that by 2020, spending on the procurement of datasets is expected to exceed $1 billion USD, either by buying access to the data sets themselves or hiring services to collect data for them. This project attempts to automate a way to gather historical election data for every constituency in Scotland, and represent the historical results for each seat in a separate graph.
 
 This project uses the Wikipedia page for every UK constituency in Scotland to create a pandas dataframe holds the results
 of every constituency in every election specified.
