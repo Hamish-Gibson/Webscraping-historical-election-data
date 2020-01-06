@@ -7,9 +7,10 @@ from tabulate import tabulate
 
 seat = pd.DataFrame()
 
-year = [
-        '2015 United Kingdom general election',
-        '2017 United Kingdom general election']
+year = ['2010 United Kingdom general election',
+        '2015 United Kingdom general election'
+        '2017 United Kingdom general election',
+        '2019 United Kingdom general election']
 for election in year: 
     for constituency in constituencies:
         webdata = rq.get(constituencies[constituency])
