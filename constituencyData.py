@@ -8,7 +8,7 @@ from tabulate import tabulate
 seat = pd.DataFrame()
 
 year = ['2010 United Kingdom general election',
-        '2015 United Kingdom general election'
+        '2015 United Kingdom general election',
         '2017 United Kingdom general election',
         '2019 United Kingdom general election']
 for election in year: 
