@@ -11,6 +11,7 @@ table = tag.find_parent('h3').next_sibling.next_sibling.next_sibling.next_siblin
 
 constituencies = {}
 
+#Creates a dictionary of Scotland constituencies and the links to each wikipedia page
 for row in table.find_all('tr')[1:]:
     key = row.find_all('td')[0].find('a').text
     value = row.find_all('td')[0].find('a')['href']
@@ -18,4 +19,3 @@ for row in table.find_all('tr')[1:]:
     
 for key in constituencies:
     constituencies[key] = 'https://en.wikipedia.org/' + constituencies[key]
-

@@ -7,24 +7,26 @@ from tabulate import tabulate
 
 seat = pd.DataFrame()
 
+#Can only go back this far, page entries change due to constituency boundary changes.
 year = ['2010 United Kingdom general election',
         '2015 United Kingdom general election',
         '2017 United Kingdom general election',
         '2019 United Kingdom general election']
+
+#Iterates through each constituency in a given election year.
 for election in year: 
     for constituency in constituencies:
         webdata = rq.get(constituencies[constituency])
         webdata = bs.BeautifulSoup(webdata.text, features = 'lxml')
         
-        #constituency = webdata.find('table', {'class' : 'infobox vcard'})
-        #constituency = constituency.find('th').text
         
+        #Finds all tables on the page
         tables = webdata.find_all('table', {'class' : 'wikitable'})
         
         for table in tables:
             for element in table.findChildren('caption'):
-                if element.findChildren('a', 
-                    {'title':election}):
+                #Only considers tables with election data
+                if element.findChildren('a', {'title':election}):
                     print('Getting and processing data...')
                     for row in table.find_all('tr', {'class' : 'vcard'}):
                         candidate = [constituency]
@@ -34,9 +36,10 @@ for election in year:
                               'Votes': '', '%':''}
                         for count, key in enumerate(df):
                             df[key] = candidate[count]
-                        seat = seat.append(pd.DataFrame(df, index=[election]))
+                        #Creates row in a dataframe containing the results
+                        seat = seat.append(pd.DataFrame(df, index=[election[:4]])) 
         print('Data retrieved for: ', election, 'in',  constituency)
     
+pd.set_option('max_colwidth', 20)
 
 print(tabulate(seat,headers='keys',tablefmt='psql'))
-
